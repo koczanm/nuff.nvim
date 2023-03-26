@@ -20,6 +20,9 @@ M.defaults = {
 		size = {
 			width = "20",
 		},
+		win_options = {
+			winhighlight = "Normal:CmpPmenu,CursorLine:CmpSel,Search:CmpSel",
+		},
 	},
 }
 

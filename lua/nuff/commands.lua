@@ -17,6 +17,12 @@ function M.setup()
 		start_session = function()
 			pomodoro.start_session()
 		end,
+		start_break = function()
+			pomodoro.start_break()
+		end,
+		status = function()
+			pomodoro.status()
+		end,
 	}
 
 	vim.api.nvim_create_user_command("Nuff", function(args)

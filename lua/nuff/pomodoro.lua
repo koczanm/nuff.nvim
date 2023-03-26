@@ -35,13 +35,11 @@ function Pomodoro:get_break_duration()
 end
 
 function Pomodoro:get_remaining_focus_time()
-	local time_diff = config.pomodoro.focus_session * 60 - os.difftime(os.time(), self.session_started_at)
-	return os.date("!%0M:%0S", time_diff)
+	return config.pomodoro.focus_session * 60 - os.difftime(os.time(), self.session_started_at)
 end
 
 function Pomodoro:get_remaining_break_time()
-	local time_diff = self:get_break_duration() * 60 - os.difftime(os.time(), self.session_started_at)
-	return os.date("!%0M:%0S", time_diff)
+	return self:get_break_duration() * 60 - os.difftime(os.time(), self.session_started_at)
 end
 
 function Pomodoro:start_session()
@@ -59,6 +57,7 @@ function Pomodoro:start_session()
 			self.state = state.stopped
 		end)
 	)
+	utils.info("Let's focus!")
 	self.session_started_at = os.time()
 	self.state = state.started
 end
@@ -74,19 +73,19 @@ function Pomodoro:start_break()
 		0,
 		vim.schedule_wrap(function()
 			ui.show_break_menu(self)
-			utils.info("Break completed")
 			self.state = state.stopped
 		end)
 	)
+	utils.info("Take a break!")
 	self.break_started_at = os.time()
 	self.state = state.at_break
 end
 
 function Pomodoro:status()
 	if self.state == state.started then
-		utils.info(self:get_remaining_focus_time())
+		utils.info(os.date("!%0M mins %0S secs", self:get_remaining_focus_time()) .. " of focus left")
 	elseif self.state == state.at_break then
-		utils.info(self:get_remaining_break_time())
+		utils.info(os.date("!%0M mins %0S secs", self:get_remaining_break_time()) .. " of break left")
 	else
 		utils.info("Not running")
 	end
@@ -104,6 +103,10 @@ end
 
 function M.start_break()
 	pomodoro:start_break()
+end
+
+function M.status()
+	pomodoro:status()
 end
 
 return M
