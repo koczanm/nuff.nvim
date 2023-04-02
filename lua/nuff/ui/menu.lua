@@ -1,7 +1,6 @@
 local Menu = require("nui.menu")
 
 local config = require("nuff.config").get_config()
-local utils = require("nuff.utils")
 
 local M = {}
 
@@ -39,10 +38,6 @@ function M.show_break_menu(pomodoro)
 		end,
 	}
 	create_menu(title, items, events)
-end
-
-function M.show_status_notification(pomodoro)
-  pomodoro.status()
 end
 
 return M

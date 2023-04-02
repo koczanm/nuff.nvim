@@ -1,6 +1,7 @@
-local config = require("nuff.config").get_config()
-local ui = require("nuff.ui")
-local utils = require("nuff.utils")
+local Config = require("nuff.config").get_config()
+local Menu = require("nuff.ui.menu")
+local Widget = require("nuff.ui.widget")
+local Utils = require("nuff.utils")
 
 local M = {}
 
@@ -27,44 +28,54 @@ function Pomodoro:new()
 end
 
 function Pomodoro:get_break_duration()
-	if self.sessions_completed == config.pomodoro.session_planned then
-		return config.pomodoro.long_break
+	if self.sessions_completed == Config.pomodoro.session_planned then
+		return Config.pomodoro.long_break
 	else
-		return config.pomodoro.short_break
+		return Config.pomodoro.short_break
 	end
 end
 
 function Pomodoro:get_remaining_focus_time()
-	return config.pomodoro.focus_session * 60 - os.difftime(os.time(), self.session_started_at)
+	return Config.pomodoro.focus_session * 60 - os.difftime(os.time(), self.session_started_at)
 end
 
 function Pomodoro:get_remaining_break_time()
 	return self:get_break_duration() * 60 - os.difftime(os.time(), self.session_started_at)
 end
 
+function Pomodoro:get_remaining_time()
+	if self.state == state.started then
+		return self:get_remaining_focus_time()
+	elseif self.state == state.at_break then
+		return self:get_remaining_break_time()
+	else
+		return 0
+	end
+end
+
 function Pomodoro:start_session()
 	if self.state ~= state.stopped then
-		utils.warn("Pomodoro is currently running")
+		Utils.warn("Pomodoro is currently running")
 		return
 	end
-	local session_ms = config.pomodoro.focus_session * 60 * 1000
+	local session_ms = Config.pomodoro.focus_session * 60 * 1000
 	self.timer:start(
 		session_ms,
 		0,
 		vim.schedule_wrap(function()
-			ui.show_session_menu(self)
+			Menu.show_session_menu(self)
 			self.sessions_completed = self.sessions_completed + 1
 			self.state = state.stopped
 		end)
 	)
-	utils.info("Let's focus!")
+	Utils.info("Let's focus!")
 	self.session_started_at = os.time()
 	self.state = state.started
 end
 
 function Pomodoro:start_break()
 	if self.state ~= state.stopped then
-		utils.warn("Pomodoro is currently running")
+		Utils.warn("Pomodoro is currently running")
 		return
 	end
 	local break_ms = self:get_break_duration() * 60 * 1000
@@ -72,22 +83,22 @@ function Pomodoro:start_break()
 		break_ms,
 		0,
 		vim.schedule_wrap(function()
-			ui.show_break_menu(self)
+			Menu.show_break_menu(self)
 			self.state = state.stopped
 		end)
 	)
-	utils.info("Take a break!")
+	Utils.info("Take a break!")
 	self.break_started_at = os.time()
 	self.state = state.at_break
 end
 
 function Pomodoro:status()
 	if self.state == state.started then
-		utils.info(os.date("!%0M mins %0S secs", self:get_remaining_focus_time()) .. " of focus left")
+		Utils.info(os.date("!%0M mins %0S secs", self:get_remaining_focus_time()) .. " of focus left")
 	elseif self.state == state.at_break then
-		utils.info(os.date("!%0M mins %0S secs", self:get_remaining_break_time()) .. " of break left")
+		Utils.info(os.date("!%0M mins %0S secs", self:get_remaining_break_time()) .. " of break left")
 	else
-		utils.info("Not running")
+		Utils.info("Not running")
 	end
 end
 
@@ -107,6 +118,10 @@ end
 
 function M.status()
 	pomodoro:status()
+end
+
+function M.toggle_timer()
+	Widget.toggle_timer(pomodoro)
 end
 
 return M

@@ -1,4 +1,4 @@
-local pomodoro = require("nuff.pomodoro")
+local Pomodoro = require("nuff.pomodoro")
 
 local M = {}
 
@@ -8,20 +8,23 @@ function M.command(cmd)
 	if M.commands[cmd] then
 		M.commands[cmd]()
 	else
-		M.commands.start_session()
+		M.commands.focus()
 	end
 end
 
 function M.setup()
 	M.commands = {
-		start_session = function()
-			pomodoro.start_session()
+		["focus"] = function()
+			Pomodoro.start_session()
 		end,
-		start_break = function()
-			pomodoro.start_break()
+		["break"] = function()
+			Pomodoro.start_break()
 		end,
-		status = function()
-			pomodoro.status()
+		["status"] = function()
+			Pomodoro.status()
+		end,
+		["timer"] = function()
+			Pomodoro.toggle_timer()
 		end,
 	}
 

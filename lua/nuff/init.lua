@@ -1,13 +1,13 @@
-local commands = require("nuff.commands")
-local config = require("nuff.config")
-local pomodoro = require("nuff.pomodoro")
+local Config = require("nuff.config")
+local Cmds = require("nuff.commands")
+local Pomodoro = require("nuff.pomodoro")
 
 local M = {}
 
 function M.setup(user_config)
-	config.setup(user_config)
-	pomodoro.setup()
-	commands.setup()
+	Config.setup(user_config)
+	Pomodoro.setup()
+	Cmds.setup()
 end
 
 return M
