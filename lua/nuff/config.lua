@@ -7,7 +7,7 @@ M.defaults = {
 		long_break = 15,
 		session_planned = 4,
 	},
-	popupmenu = {
+	menu = {
 		border = {
 			padding = { 0, 1 },
 			style = "rounded",
@@ -21,7 +21,17 @@ M.defaults = {
 			width = "20",
 		},
 		win_options = {
-			winhighlight = "Normal:CmpPmenu,CursorLine:CmpSel,Search:CmpSel",
+			winhighlight = "Normal:Pmenu,CursorLine:PmenuSel,Search:PmenuSel",
+		},
+	},
+	widget = {
+		boder = {
+			style = "none",
+		},
+		relative = "editor",
+		position = { row = "99%", col = "100%" },
+		win_options = {
+			winhighlight = "Normal:,FloatBorder:",
 		},
 	},
 }

@@ -1,29 +1,25 @@
 local Popup = require("nui.popup")
 
+local Config = require("nuff.config").get_config()
+
 local M = {}
 
 local Widget = {}
 Widget.__index = Widget
 
 function Widget:new(pomodoro)
+	local opts = {
+		size = { width = 5, height = 1 },
+		focusable = false,
+		buf_options = {
+			modifiable = true,
+			readonly = false,
+		},
+	}
+	local widget_opts = vim.tbl_deep_extend("force", Config.widget, opts)
 	local this = {
 		pomodoro = pomodoro,
-		popup = Popup({
-			border = {
-				style = "none",
-			},
-			relative = "editor",
-			position = { row = "99%", col = "100%" },
-			size = { width = 5, height = 1 },
-			focusable = false,
-			buf_options = {
-				modifiable = true,
-				readonly = false,
-			},
-			win_options = {
-				winhighlight = "Normal:,FloatBorder:",
-			},
-		}),
+		popup = Popup(widget_opts),
 		visible = false,
 		timer = vim.loop.new_timer(),
 	}
@@ -54,7 +50,7 @@ function Widget:hide()
 	end
 
 	self.visible = false
-  self.timer:stop()
+	self.timer:stop()
 	self.popup:unmount()
 end
 

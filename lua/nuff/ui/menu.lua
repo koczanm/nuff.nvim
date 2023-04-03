@@ -1,11 +1,11 @@
 local Menu = require("nui.menu")
 
-local config = require("nuff.config").get_config()
+local Config = require("nuff.config").get_config()
 
 local M = {}
 
 local function create_menu(title, items, events, opts)
-	local menu_opts = vim.tbl_deep_extend("force", config.popupmenu, opts or {})
+	local menu_opts = vim.tbl_deep_extend("force", Config.menu, opts or {})
 	menu_opts.border.text.top = " " .. title .. " "
 	local lines = vim.tbl_map(function(item)
 		return Menu.item(item)
